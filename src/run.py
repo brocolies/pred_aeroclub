@@ -41,7 +41,7 @@ def calculate_hit_rate_at_k(y_pred, y_true, ranker_ids, k=3):
         return 0.0
     return hits / valid_queries_count    # 성공률 반환    
 
-def baseline_cv_score(df, n_splits=5):
+def get_cv_score(df, n_splits=5):
     sessions = df['ranker_id'].unique()
     # session 단위로 묶어 평가해야 하기 때문에, ranker_id의 unique값을 session 개수로 파악
     kf = KFold(n_splits=n_splits, shuffle=True, random_state=42)

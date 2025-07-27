@@ -69,5 +69,13 @@ def searchRoute(df):
 def frequentFlyer(df):
     df['frequentFlyer_count'] = df['frequentFlyer'].str.split('/').str.len().fillna(0).astype('int8')
     df['is_frequentFlyer'] = df['frequentFlyer'].str.len() > 0
+
     return df
 
+def fe_columns(df):
+    df['ff_company_matches'] = df.apply(
+    lambda row: str(row['legs0_segments0_operatingCarrier_code']) in str(row['frequentFlyer']), 
+    axis=1
+    )
+    
+    return df

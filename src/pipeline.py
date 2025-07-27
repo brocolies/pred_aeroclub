@@ -5,7 +5,7 @@ from src.utils import *
 from src.feature_engineering import *
 from src.run import *
 
-def pipeline():
+def basic_data_pipeline():
     df = get_train_data()
     df = reduce_mem_usage(df)
     df = drop_constant_columns(df)
@@ -15,4 +15,8 @@ def pipeline():
     df = searchRoute(df)
     df = frequentFlyer(df)
     
+    return df
+
+def fe1_pipeline(df):
+    df = fe_columns(df)
     return df
