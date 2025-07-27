@@ -8,6 +8,15 @@ def drop_constant_columns(df):
             df = df.drop(columns=f'{col}')
     return df
 
+def drop_useless_columns(df):
+    segments3_cols = []
+    entire_col_names = df.columns.tolist()
+    for col in entire_col_names:
+        if 'segments3' in col:
+            segments3_cols.append(col)
+    df = df.drop(columns=segments3_cols)
+    return df
+
 def type_conversion(df):
     for col in df.columns:
         if 'duration' in col:
@@ -78,4 +87,33 @@ def fe_columns(df):
     axis=1
     )
     
+    return df
+
+def top_company(df):
+    # 이용률이 높은 항공사 위주로 is_ feature 생성
+    top_company = df['legs0_segments0_operatingCarrier_code'].value_counts().head(30)
+    top_company = top_company > 100000
+    top_company = top_company[top_company].index.tolist()
+    for company in top_company:
+        df[f'is_{company}'] = (
+            df['legs0_segments0_operatingCarrier_code'] == company).astype(int)
+    df = df.drop(columns='frequentFlyer')
+    return df
+
+def is_direct_flight(df):
+    df['is_direct_flight'] = df['legs0_segments1_aircraft_code'].isnull().astype(int)
+    return df
+
+def baggage_measurement_type(df):
+    legs = [0, 1]
+    segments = [0, 1, 2]
+    for i in legs:
+        for j in segments:
+            weight_col = f'legs{i}_segments{j}_baggageAllowance_weightMeasurementType'
+            quantity_col = f'legs{i}_segments{j}_baggageAllowance_quantity'
+
+            # 컬럼 존재 여부 확인
+            if weight_col in df.columns and quantity_col in df.columns:
+                df[f'legs{i}_segments{j}_is_weight_based'] = (df[weight_col] == 1) & (df[quantity_col] > 3)
+                df[f'legs{i}_segments{j}_is_no_baggage'] = (df[weight_col] == 1) & (df[quantity_col] == 0)
     return df
