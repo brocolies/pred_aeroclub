@@ -20,4 +20,6 @@ def basic_data_pipeline():
 def fe1_pipeline(df):
     df = fe_columns(df)
     df = top_company(df)
+    df = cabin_class_features(df)
+    df = is_direct_flight(df)
     return df

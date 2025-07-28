@@ -104,16 +104,26 @@ def is_direct_flight(df):
     df['is_direct_flight'] = df['legs0_segments1_aircraft_code'].isnull().astype(int)
     return df
 
-def baggage_measurement_type(df):
-    legs = [0, 1]
-    segments = [0, 1, 2]
-    for i in legs:
-        for j in segments:
-            weight_col = f'legs{i}_segments{j}_baggageAllowance_weightMeasurementType'
-            quantity_col = f'legs{i}_segments{j}_baggageAllowance_quantity'
+# def baggage_measurement_type(df):
+#     legs = [0, 1]
+#     segments = [0, 1, 2]
+#     for i in legs:
+#         for j in segments:
+#             weight_col = f'legs{i}_segments{j}_baggageAllowance_weightMeasurementType'
+#             quantity_col = f'legs{i}_segments{j}_baggageAllowance_quantity'
 
-            # 컬럼 존재 여부 확인
-            if weight_col in df.columns and quantity_col in df.columns:
-                df[f'legs{i}_segments{j}_is_weight_based'] = (df[weight_col] == 1) & (df[quantity_col] > 3)
-                df[f'legs{i}_segments{j}_is_no_baggage'] = (df[weight_col] == 1) & (df[quantity_col] == 0)
+#             # 컬럼 존재 여부 확인
+#             if weight_col in df.columns and quantity_col in df.columns:
+#                 df[f'legs{i}_segments{j}_is_weight_based'] = (df[weight_col] == 1) & (df[quantity_col] > 3)
+#                 df[f'legs{i}_segments{j}_is_no_baggage'] = (df[weight_col] == 1) & (df[quantity_col] == 0)
+#     return df
+
+def cabin_class_features(df):
+    cabin_mapping = {1: 1, 2: 2, 3: 4, 4: 3}
+
+    for i in [0, 1]:
+        for j in [0, 1, 2]:
+            col = f'legs{i}_segments{j}_cabinClass'
+            if col in df.columns:
+                df[col] = df[col].map(cabin_mapping)
     return df
